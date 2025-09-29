@@ -28,8 +28,8 @@ const contactInfo = [
   {
     icon: Mail,
     label: 'Email',
-    value: 'trintz98@gmail.com',
-    href: 'mailto:trintz98@gmail.com'
+    value: 'support@trintz.in',
+    href: 'mailto:support@trintz.in'
   },
   {
     icon: Phone,

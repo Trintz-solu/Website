@@ -42,7 +42,7 @@ const socialLinks = [
   },
   { 
     icon: Mail, 
-    href: 'mailto:trintz98@gmail.com', 
+    href: 'mailto:support@trintz.in', 
     label: 'Email',
     color: 'text-white hover:text-gray-300'
   }
@@ -55,27 +55,49 @@ export default function Footer() {
 
   useScrollTrigger({
     trigger: footerRef.current,
-    start: 'top 80%',
+    once: true,
     onEnter: () => {
-      gsap.fromTo(
-        titleRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }
-      );
+      if (!titleRef.current || !contentRef.current) return;
       
-      gsap.fromTo(
-        contentRef.current?.children || [],
-        { opacity: 0, y: 20 },
-        { 
-          opacity: 1, 
-          y: 0,
-          duration: 0.6, 
-          stagger: 0.1, 
-          ease: 'power2.out',
-          delay: 0.3
-        }
-      );
-    },
+      const contentChildren = Array.from(contentRef.current.children);
+      if (contentChildren.length === 0) return;
+      
+      const ctx = gsap.context(() => {
+        const tl = gsap.timeline({
+          defaults: { ease: 'power3.out' },
+          onComplete: () => {
+            if (titleRef.current) titleRef.current.style.willChange = 'auto';
+            contentChildren.forEach(child => {
+              (child as HTMLElement).style.willChange = 'auto';
+            });
+          }
+        });
+        
+        // Animate title
+        tl.fromTo(
+          titleRef.current,
+          { opacity: 0, y: 30, willChange: 'transform, opacity' },
+          { opacity: 1, y: 0, duration: 0.8 },
+          0
+        );
+        
+        // Animate content with stagger
+        tl.fromTo(
+          contentChildren,
+          { opacity: 0, y: 20, willChange: 'transform, opacity' },
+          { 
+            opacity: 1, 
+            y: 0,
+            duration: 0.7,
+            stagger: 0.1,
+            ease: 'back.out(1.4)'
+          },
+          0.3
+        );
+        
+        return () => ctx.revert();
+      }, footerRef);
+    }
   });
 
   const handleLinkClick = (href: string) => {
@@ -134,10 +156,10 @@ export default function Footer() {
               <div className="flex items-center justify-center md:justify-start">
                 <Mail className="h-6 w-6 mr-3 text-cyan-400" />
                 <a 
-                  href="mailto:gangeswarajj@gmail.com" 
+                  href="mailto:support@trintz.in" 
                   className="text-gray-300 hover:text-white transition-colors text-lg"
                 >
-                  trintz98@gmail.com
+                  support@trintz.in
                 </a>
               </div>
             </div>

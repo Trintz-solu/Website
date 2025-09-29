@@ -36,35 +36,56 @@ const features = [
   }
 ];
 
-
 export default function AIShowcaseSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
 
+  // Optimized scroll trigger with GSAP
   useScrollTrigger({
     trigger: sectionRef.current,
-    start: 'top 80%',
+    once: true,
     onEnter: () => {
-      gsap.fromTo(
-        titleRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }
-      );
+      if (!titleRef.current || !cardsRef.current) return;
       
-      gsap.fromTo(
-        cardsRef.current?.children || [],
-        { opacity: 0, y: 20 },
-        { 
-          opacity: 1, 
-          y: 0,
-          duration: 0.6, 
-          stagger: 0.1, 
-          ease: 'power2.out',
-          delay: 0.3
-        }
-      );
-    },
+      const cards = Array.from(cardsRef.current.children);
+      if (cards.length === 0) return;
+      
+      const ctx = gsap.context(() => {
+        const tl = gsap.timeline({
+          defaults: { ease: 'power3.out' },
+          onComplete: () => {
+            // Clean up will-change after animation
+            if (titleRef.current) titleRef.current.style.willChange = 'auto';
+            cards.forEach(card => {
+              (card as HTMLElement).style.willChange = 'auto';
+            });
+          }
+        });
+        
+        // Animate title
+        tl.fromTo(titleRef.current, 
+          { opacity: 0, y: 30, willChange: 'transform, opacity' },
+          { opacity: 1, y: 0, duration: 0.8 },
+          0
+        );
+        
+        // Animate cards with stagger
+        tl.fromTo(cards,
+          { opacity: 0, y: 20, willChange: 'transform, opacity' },
+          { 
+            opacity: 1, 
+            y: 0,
+            duration: 0.7,
+            stagger: 0.1,
+            ease: 'back.out(1.4)'
+          },
+          0.3
+        );
+        
+        return () => ctx.revert();
+      }, sectionRef);
+    }
   });
 
   // Mouse interactions for feature cards
