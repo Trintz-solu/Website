@@ -42,7 +42,7 @@ const socialLinks = [
   },
   { 
     icon: Mail, 
-    href: 'mailto:gangeswarajj@gmail.com', 
+    href: 'mailto:trintz98@gmail.com', 
     label: 'Email',
     color: 'text-white hover:text-gray-300'
   }
@@ -137,7 +137,7 @@ export default function Footer() {
                   href="mailto:gangeswarajj@gmail.com" 
                   className="text-gray-300 hover:text-white transition-colors text-lg"
                 >
-                  gangeswarajj@gmail.com
+                  trintz98@gmail.com
                 </a>
               </div>
             </div>
