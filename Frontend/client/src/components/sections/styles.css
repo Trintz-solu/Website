@@ -1,0 +1,30 @@
+/* Hide scrollbar but keep functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* Internet Explorer and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* Timeline styles for Services section */
+.timeline-track {
+  background: linear-gradient(180deg, rgba(120,120,120,0.2), rgba(120,120,120,0.05));
+}
+
+.timeline-progress {
+  background: linear-gradient(180deg, rgba(0,212,255,1) 0%, rgba(0,160,220,1) 100%);
+  box-shadow: 0 0 20px rgba(0, 200, 255, 0.25);
+  transition: height 200ms ease-out;
+}
+
+.timeline-dot {
+  box-shadow: 0 0 0 0 rgba(0, 200, 255, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timeline-progress {
+    transition: none !important;
+  }
+}
