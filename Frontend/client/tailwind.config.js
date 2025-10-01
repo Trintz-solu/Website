@@ -9,6 +9,7 @@ export default {
     extend: {
       fontFamily: {
         sans: [
+          "Sora",
           "Inter",
           "ui-sans-serif",
           "system-ui",
