@@ -45,27 +45,33 @@ export default function Navigation() {
   const navRef = useRef<HTMLElement>(null);
   const [, setLocation] = useLocation();
 
-  // Hide/show on scroll
+  // Hide/show on scroll (throttled with rAF)
   useEffect(() => {
-    const onScroll = () => {
-      const current = window.scrollY;
-      const last = lastScrollYRef.current;
-      const delta = Math.abs(current - last);
-      if (delta < 10) return;
-
-      if (current < 100) {
-        setIsVisible(true);
-      } else if (current > last && delta > 20) {
-        setIsVisible(false);
-        setIsOpen(false);
-      } else if (current < last && delta > 20) {
-        setIsVisible(true);
-      }
-      lastScrollYRef.current = current;
+    let ticking = false;
+    const handleScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const current = window.scrollY;
+        const last = lastScrollYRef.current;
+        const delta = Math.abs(current - last);
+        if (delta >= 20) {
+          if (current < 100) {
+            setIsVisible(true);
+          } else if (current > last) {
+            setIsVisible(false);
+            setIsOpen(false);
+          } else if (current < last) {
+            setIsVisible(true);
+          }
+          lastScrollYRef.current = current;
+        }
+        ticking = false;
+      });
     };
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Animate navbar translateY
@@ -73,9 +79,10 @@ export default function Navigation() {
     if (!navRef.current) return;
     gsap.to(navRef.current, {
       y: isVisible ? 0 : -100,
-      duration: 0.3,
-        ease: 'power2.out',
-      });
+      duration: 0.25,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    });
   }, [isVisible]);
 
   const isActive = (tab: NavTab): boolean => {
@@ -263,8 +270,8 @@ export default function Navigation() {
             </button>
           </div>
 
-          {/* Mobile Burger */}
-          <div className="md:hidden">
+          {/* Mobile Burger - visible below lg (1024px) */}
+          <div className="lg:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="p-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded-md"
@@ -277,9 +284,9 @@ export default function Navigation() {
         </header>
       </div>
 
-      {/* Mobile Dropdown */}
+      {/* Mobile Dropdown - matches burger visibility below lg */}
       <div
-        className={`md:hidden px-4 transition-all duration-300 overflow-hidden ${
+        className={`lg:hidden px-4 transition-all duration-300 overflow-hidden ${
           isOpen ? 'max-h-[500px] pb-4' : 'max-h-0'
         }`}
       >
