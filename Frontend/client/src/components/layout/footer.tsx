@@ -233,11 +233,11 @@ export default function Footer() {
               &copy; {new Date().getFullYear()} Trintz Solutions. All rights reserved.
             </p>
             <div className="flex space-x-8">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
+              <a href="/privacy-policy" className="text-gray-400 hover:text-white transition-colors">
                 Privacy Policy
               </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                Terms of Service
+              <a href="/terms-and-conditions" className="text-gray-400 hover:text-white transition-colors">
+                Terms & Conditions
               </a>
             </div>
           </div>

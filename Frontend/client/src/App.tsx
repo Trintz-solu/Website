@@ -7,6 +7,8 @@ import { ErrorBoundary } from "@/components/ui/error-boundary";
 import Loading from "@/components/ui/loading";
 import Home from "@/pages/home";
 import AboutPage from "@/pages/about";
+import PrivacyPolicy from "@/pages/PrivacyPolicy";
+import TermsConditions from "@/pages/TermsConditions";
 
 import NotFound from "@/pages/not-found";
 import { Suspense, useEffect } from "react";
@@ -37,6 +39,8 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/about" component={AboutPage} />
+        <Route path="/privacy-policy" component={PrivacyPolicy} />
+        <Route path="/terms-and-conditions" component={TermsConditions} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>
