@@ -37,6 +37,12 @@
     overflow-x: hidden;
     min-height: 100vh;
   }
+
+  /* Force Sora/Inter across common elements to avoid serif fallback (e.g., Times) */
+  html, body, p, span, a, div, button, input, select, textarea, li, label {
+    font-family: 'Sora', 'Inter', ui-sans-serif, system-ui, 'Segoe UI', Helvetica, Arial, 'Noto Sans', sans-serif !important;
+    font-style: normal;
+  }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Sora', sans-serif;
