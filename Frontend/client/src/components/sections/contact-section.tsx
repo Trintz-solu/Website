@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import * as React from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -28,8 +29,8 @@ const contactInfo = [
   {
     icon: Mail,
     label: 'Email',
-    value: 'support@trintz.in',
-    href: 'mailto:support@trintz.in'
+    value: 'gangeswarajj@gmail.com',
+    href: 'mailto:gangeswarajj@gmail.com'
   },
   {
     icon: Phone,
@@ -48,13 +49,13 @@ const contactInfo = [
 const socialLinks = [
   {
     icon: Linkedin,
-    href: 'https://www.linkedin.com/company/trintz/',
+    href: 'https://linkedin.com/company/trintz',
     label: 'LinkedIn',
     color: 'hover:bg-[#0A66C2]',
   },
   {
     icon: Instagram,
-    href: 'https://www.instagram.com/trintz._/?utm_source=ig_web_button_share_sheet',
+    href: 'https://instagram.com/trintz_ai',
     label: 'Instagram',
     color: 'hover:bg-gradient-to-br from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
   },
@@ -69,24 +70,24 @@ const ContactSection = () => {
 
   useScrollTrigger({
     trigger: sectionRef.current,
-    start: 'top 80%',
+    start: 'top 90%',
     onEnter: () => {
       gsap.fromTo(
         titleRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' }
       );
       
       gsap.fromTo(
         contentRef.current?.children || [],
-        { opacity: 0, y: 20 },
+        { opacity: 0, y: 15 },
         { 
           opacity: 1, 
           y: 0,
-          duration: 0.6, 
-          stagger: 0.1, 
+          duration: 0.3, 
+          stagger: 0.05, 
           ease: 'power2.out',
-          delay: 0.3
+          delay: 0.1
         }
       );
     },
@@ -114,19 +115,59 @@ const ContactSection = () => {
       const result = await EmailJSService.sendContactFormOnly(payload);
 
       toast({
-        title: result.success ? 'Message sent!' : 'Failed to send',
+        title: result.success ? 'Message Sent!' : 'Failed to Send',
         description: result.message,
-        ...(result.success ? {} : { variant: 'destructive' })
+        duration: 4000,
+        ...(result.success
+          ? {
+              className: 'bg-gradient-to-r from-green-500/15 to-emerald-500/15 border-green-400/40 text-green-200 backdrop-blur-sm shadow-md shadow-green-400/10 p-3 text-xs max-w-xs',
+              style: {
+                background: 'linear-gradient(to right, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.15))',
+                border: '1px solid rgba(74, 222, 128, 0.4)',
+                color: '#bbf7d0',
+                fontSize: '12px',
+                fontWeight: '500',
+                borderRadius: '8px',
+                maxWidth: '280px',
+                padding: '10px 14px'
+              }
+            }
+          : {
+              variant: 'destructive',
+              className: 'bg-gradient-to-r from-red-500/15 to-rose-500/15 border-red-400/40 text-red-200 backdrop-blur-sm shadow-md shadow-red-400/10 p-3 text-xs max-w-xs',
+              style: {
+                background: 'linear-gradient(to right, rgba(239, 68, 68, 0.15), rgba(244, 63, 94, 0.15))',
+                border: '1px solid rgba(248, 113, 113, 0.4)',
+                color: '#fecaca',
+                fontSize: '12px',
+                fontWeight: '500',
+                borderRadius: '8px',
+                maxWidth: '280px',
+                padding: '10px 14px'
+              }
+            }
+        )
       });
       if (result.success) {
-        reset();
+        reset(); // Reset form on success
       }
     } catch (error) {
       console.error('Error submitting form:', error);
       toast({
         title: 'Error',
         description: 'Failed to send message. Please try again later.',
-        variant: 'destructive',
+        duration: 4000,
+        className: 'bg-gradient-to-r from-red-500/15 to-rose-500/15 border-red-400/40 text-red-200 backdrop-blur-sm shadow-md shadow-red-400/10 p-3 text-xs max-w-xs',
+        style: {
+          background: 'linear-gradient(to right, rgba(239, 68, 68, 0.15), rgba(244, 63, 94, 0.15))',
+          border: '1px solid rgba(248, 113, 113, 0.4)',
+          color: '#fecaca',
+          fontSize: '12px',
+          fontWeight: '500',
+          borderRadius: '8px',
+          maxWidth: '280px',
+          padding: '10px 14px'
+        }
       });
     } finally {
       setIsSubmitting(false);
@@ -134,7 +175,7 @@ const ContactSection = () => {
   };
 
   return (
-    <section ref={sectionRef} id="contact" data-nav-sticky="true" className="py-20 sm:py-24 lg:py-32 bg-transparent relative z-10 scroll-mt-24">
+    <section ref={sectionRef} id="contact" data-nav-sticky="true" className="py-4 sm:py-6 lg:py-8 bg-transparent relative z-10 scroll-mt-16">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 -right-32 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl"></div>
@@ -146,21 +187,21 @@ const ContactSection = () => {
         {/* Header */}
         <motion.div
           ref={titleRef}
-          className="text-center mb-16 sm:mb-20"
+          className="text-center mb-8 sm:mb-12"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400">
             Get In Touch
           </h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-400 max-w-3xl mx-auto">
             Have a question or want to discuss a project? We'd love to hear from you.
           </p>
         </motion.div>
 
         {/* Contact Content */}
-        <div ref={contentRef} className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div ref={contentRef} className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* Contact Form */}
           <motion.div
             className="relative"
@@ -174,7 +215,7 @@ const ContactSection = () => {
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-500/0 via-blue-500/0 to-purple-500/0 group-hover:from-cyan-500/5 group-hover:via-blue-500/5 group-hover:to-purple-500/5 transition-all duration-500"></div>
               
               <div className="relative z-10">
-                <h3 className="text-3xl font-bold text-white mb-8 lg:mb-6">
+                <h3 className="text-2xl font-bold text-white mb-8 lg:mb-6">
                   Send us a Message
                 </h3>
                 
@@ -239,6 +280,7 @@ const ContactSection = () => {
                     className="w-full py-4 px-6 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold text-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-cyan-400/50"
                     disabled={isSubmitting}
                     whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.2, type: 'spring', stiffness: 400, damping: 25 }}
                     whileTap={{ scale: 0.98 }}
                   >
                     {isSubmitting ? (
@@ -260,17 +302,17 @@ const ContactSection = () => {
 
           {/* Contact Information */}
           <motion.div 
-            className="space-y-8"
+            className="space-y-8 will-change-transform transform-gpu"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
-            <div className="space-y-6">
-              <h3 className="text-3xl font-bold text-white mb-6 lg:mb-6 lg:mt-8">
+            <div className="space-y-6 will-change-transform transform-gpu">
+              <h3 className="text-2xl font-bold text-white mb-6 lg:mb-6 lg:mt-8 will-change-opacity">
                 Contact Information
               </h3>
-              <p className="text-gray-300 text-lg leading-relaxed">
+              <p className="text-base text-gray-300 leading-relaxed">
                 Have questions or want to discuss a project? Reach out to us and our team will get back to you as soon as possible.
               </p>
             </div>
@@ -283,8 +325,8 @@ const ContactSection = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-start space-x-4 group p-4 rounded-xl bg-transparent backdrop-blur-sm border border-white/10 hover:border-cyan-400/30 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-400/10"
-                  whileHover={{ x: 5, y: -2 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  whileHover={{ x: 5, y: -2, scale: 1.02 }}
+                  transition={{ duration: 0.2, type: 'spring', stiffness: 400, damping: 25 }}
                 >
                   <div className="flex-shrink-0 p-3 bg-gradient-to-br from-cyan-500/20 to-blue-500/20 rounded-xl group-hover:from-cyan-500/30 group-hover:to-blue-500/30 transition-all duration-300">
                     <item.icon className="w-6 h-6 text-cyan-400" />
@@ -298,7 +340,7 @@ const ContactSection = () => {
             </div>
             
             <div className="pt-6">
-              <h3 className="text-2xl font-bold text-white mb-6">
+              <h3 className="text-xl font-bold text-white mb-6">
                 Follow Us
               </h3>
               <div className="flex space-x-4">
@@ -311,6 +353,7 @@ const ContactSection = () => {
                     className="p-4 rounded-xl bg-transparent backdrop-blur-sm border border-white/10 hover:border-cyan-400/30 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-400/10"
                     aria-label={social.label}
                     whileHover={{ y: -4, scale: 1.05 }}
+                    transition={{ duration: 0.2, type: 'spring', stiffness: 400, damping: 25 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     <social.icon className="w-6 h-6 text-white" />

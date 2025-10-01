@@ -1,9 +1,6 @@
 import { useRef } from 'react';
 import { motion } from 'framer-motion';
-import gsap from 'gsap';
-import { Rocket, Shield, Users, CheckCircle, Star, Zap, Target, Award, Lightbulb, Code, Database, Globe } from 'lucide-react';
-import { useScrollTrigger } from '@/hooks/use-scroll-trigger';
-import { useMouseInteractions } from '@/hooks/use-mouse-interactions';
+import { Rocket, Shield, Users, Code, Database, Globe, Lightbulb } from 'lucide-react';
 
 const values = [
   {
@@ -33,75 +30,46 @@ const features = [
   {
     icon: Code,
     title: 'Custom Development',
-    description: 'Tailored web and mobile applications designed to match your business goals',
+    description: 'Bespoke web applications tailored to your unique business requirements',
     color: 'from-blue-500 to-cyan-500'
   },
   {
     icon: Database,
     title: 'Data Analytics',
-    description: 'Unlock patterns and insights from data to fuel smarter strategies',
+    description: 'Transform raw data into actionable insights for better decision making',
     color: 'from-green-500 to-emerald-500'
   },
   {
     icon: Globe,
     title: 'Global Reach',
-    description: 'Robust, scalable systems built to perform across industries and borders',
+    description: 'Scalable solutions that work seamlessly across different markets',
     color: 'from-purple-500 to-pink-500'
   },
   {
     icon: Lightbulb,
     title: 'AI Integration',
-    description: 'Seamless AI-powered automation that enhances efficiency and growth',
+    description: 'Intelligent automation that streamlines your business processes',
     color: 'from-amber-500 to-orange-500'
   }
 ];
 
-
 export default function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
-  
-  // Mouse interactions
-  const { elementRef: headerRef, combinedTransform: headerTransform } = useMouseInteractions({
-    enableParallax: true,
-    enableMagnetic: true,
-    magneticStrength: 0.2
-  });
 
-  useScrollTrigger({
-    trigger: sectionRef.current,
-    start: 'top 85%',
-    onEnter: () => {
-      const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
-      tl.fromTo(
-        contentRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8 }
-      );
-    },
-  });
+  // Removed scroll trigger for better performance - content is now visible by default
 
   return (
-    <section ref={sectionRef} id="about" data-nav-sticky="true" className="relative py-16 sm:py-20 lg:py-24 bg-transparent overflow-hidden scroll-mt-24">
-      {/* Enhanced Background Elements */}
+    <section ref={sectionRef} id="about" data-nav-sticky="true" className="relative py-6 sm:py-8 lg:py-12 bg-transparent overflow-hidden scroll-mt-16">
+      {/* Simple Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-cyan-500/10 to-blue-600/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-purple-500/10 to-pink-600/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-br from-amber-500/5 to-orange-500/5 rounded-full blur-3xl animate-pulse delay-2000"></div>
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-cyan-500/5 to-blue-600/5 rounded-full blur-3xl"></div>
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-purple-500/5 to-pink-600/5 rounded-full blur-3xl"></div>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header Section (badge text removed as requested) */}
-        <motion.div 
-          ref={headerRef as any}
-          className="text-center mb-16 sm:mb-20 lg:mb-24"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          viewport={{ once: true }}
-        >
-          {/* Removed the small 'About' pill */}
-          
+        {/* Header Section */}
+        <div className="text-center mb-6 sm:mb-8 lg:mb-12">
           <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-8 leading-tight">
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600">
               Empowering Businesses Through
@@ -109,96 +77,87 @@ export default function AboutSection() {
             <br />
             <span className="text-gray-300">AI-Driven Innovation</span>
           </h2>
-          
+
           <p className="text-xl sm:text-2xl text-gray-300 max-w-4xl mx-auto leading-relaxed font-medium">
             We deliver next-gen web and mobile applications, intelligent automation, and seamless AI model integration to help your business thrive in the digital era.
           </p>
-        </motion.div>
+        </div>
 
         {/* Main Content */}
-        <div ref={contentRef} className="space-y-20">
+        <div ref={contentRef} className="space-y-12">
           {/* Values Section */}
-          <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
             {values.map((value, index) => (
               <motion.div
                 key={value.title}
                 className="group relative h-full"
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
                 viewport={{ once: true }}
-                whileHover={{ y: -8 }}
+                whileHover={{ y: -5, scale: 1.02 }}
+                transition={{ duration: 0.2, type: 'spring', stiffness: 400, damping: 25 }}
               >
-                <div className="relative p-8 rounded-2xl bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-cyan-400/50 transition-all duration-300 group-hover:shadow-2xl group-hover:shadow-cyan-400/20 h-full flex flex-col">
-                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${value.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                <div className="relative p-8 rounded-2xl bg-gradient-to-br from-gray-900/50 to-gray-800/50 backdrop-blur-sm border border-gray-700/50 hover:border-cyan-400/50 transition-all duration-200 h-full flex flex-col">
+                  <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${value.color} flex items-center justify-center mb-6`}>
                     <value.icon className="w-8 h-8 text-white" />
                   </div>
-                  
-                  <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-cyan-300 transition-colors duration-200">
+
+                  <h3 className="text-xl font-bold text-white mb-4 group-hover:text-cyan-300 transition-colors duration-150">
                     {value.title}
                   </h3>
-                  
-                  <p className="text-gray-300 text-lg leading-relaxed mb-6 flex-grow">
+
+                  <p className="text-gray-300 text-base leading-relaxed mb-6 flex-grow">
                     {value.description}
                   </p>
-                  
-                  <div className={`text-2xl font-bold bg-gradient-to-r ${value.color} bg-clip-text text-transparent`}>
+
+                  <div className={`text-xl font-bold bg-gradient-to-r ${value.color} bg-clip-text text-transparent`}>
                     {value.highlight}
                   </div>
-                  
-                  {/* Hover effect */}
-                  <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-400/0 via-cyan-400/15 to-cyan-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-            </div>
+                </div>
               </motion.div>
             ))}
-          </motion.div>
+          </div>
 
           {/* Features Grid */}
           <motion.div
-            className="space-y-12"
+            className="space-y-8"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
           >
             <div className="text-center">
-              <h3 className="text-4xl sm:text-5xl font-bold mb-6">
+              <h3 className="text-3xl sm:text-4xl font-bold mb-6">
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
                   Our Expertise
                 </span>
               </h3>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                We blend innovation with precision to craft solutions that drive real business impact.
+              <p className="text-lg text-gray-300 max-w-3xl mx-auto">
+                We combine technical excellence with creative vision to deliver solutions that exceed expectations.
               </p>
-                  </div>
-            
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8 items-stretch">
               {features.map((feature, index) => (
                 <motion.div
                   key={feature.title}
                   className="group text-center h-full"
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  whileHover={{ y: -5 }}
+                  whileHover={{ y: -3, scale: 1.02 }}
+                  transition={{ duration: 0.2, delay: index * 0.1, type: 'spring', stiffness: 400, damping: 25 }}
                 >
-                  <div className="relative p-6 rounded-xl bg-gradient-to-br from-gray-900/30 to-gray-800/30 backdrop-blur-sm border border-gray-700/30 hover:border-purple-400/50 transition-all duration-200 group-hover:shadow-xl group-hover:shadow-purple-400/20 h-full flex flex-col">
-                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                  <div className="relative p-6 rounded-xl bg-gradient-to-br from-gray-900/30 to-gray-800/30 backdrop-blur-sm border border-gray-700/30 hover:border-purple-400/50 transition-all duration-150 h-full flex flex-col">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.color} flex items-center justify-center mx-auto mb-4`}>
                       <feature.icon className="w-6 h-6 text-white" />
-                  </div>
-                    
-                    <h4 className="text-xl font-semibold text-white mb-3 group-hover:text-purple-300 transition-colors duration-200">
+                    </div>
+
+                    <h4 className="text-lg font-semibold text-white mb-3 group-hover:text-purple-300 transition-colors duration-150">
                       {feature.title}
                     </h4>
-                    
-                    <p className="text-gray-300 text-base leading-relaxed flex-grow">
+
+                    <p className="text-gray-300 text-sm leading-relaxed flex-grow">
                       {feature.description}
                     </p>
                   </div>
@@ -212,39 +171,42 @@ export default function AboutSection() {
             className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-gray-900/80 to-gray-800/80 backdrop-blur-sm border border-gray-700/50 p-8 sm:p-12 lg:p-16"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
             viewport={{ once: true }}
           >
             <div className="relative z-10 text-center">
-              <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-6">
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-6">
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
                   Ready to Transform Your Business?
                 </span>
               </h3>
-              
-              <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+
+              <p className="text-lg text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
                 Let's discuss how we can help you achieve your digital goals with our innovative solutions and expert guidance.
               </p>
-              
-              <motion.button 
-                onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })} 
-                className="relative px-12 py-4 rounded-2xl text-white font-semibold text-lg transition-all duration-500 overflow-hidden group"
+
+              <motion.button
+                onClick={() => {
+                  const element = document.querySelector('#contact');
+                  if (element) {
+                    const nav = document.querySelector('nav');
+                    const navHeight = (nav as HTMLElement | null)?.offsetHeight ?? 80;
+                    const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+                    const offsetPosition = elementPosition - navHeight + 30;
+
+                    window.scrollTo({
+                      top: offsetPosition,
+                      behavior: 'smooth'
+                    });
+                  }
+                }}
+                className="relative px-12 py-4 rounded-2xl text-white font-semibold text-lg bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 hover:from-cyan-400 hover:via-blue-400 hover:to-purple-500 transition-all duration-300"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 group-hover:from-cyan-400 group-hover:via-blue-400 group-hover:to-purple-500 transition-all duration-500"></span>
-                <span className="relative z-10 flex items-center justify-center gap-3">
-                  <span>Start Your Project</span>
-                  <svg className="w-5 h-5 text-white group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                  </svg>
-                </span>
+                Start Your Project
               </motion.button>
             </div>
-            
-            {/* Animated background elements */}
-            <div className="absolute -top-20 -right-20 w-40 h-40 bg-cyan-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
-            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-500/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 delay-200"></div>
           </motion.div>
         </div>
       </div>

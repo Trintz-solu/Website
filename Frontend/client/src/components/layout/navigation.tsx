@@ -2,12 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
 import { Menu, X } from 'lucide-react';
-import { useLocation } from 'wouter';
+import { useLocation, Link } from 'wouter';
+import logoImage from '@/images/logo.jpeg';
 
-// Register GSAP plugin once
 gsap.registerPlugin(ScrollToPlugin);
 
-// Define types for tabs
 interface NavTab {
   label: string;
   href: string;
@@ -22,132 +21,205 @@ const tabs: NavTab[] = [
   { label: 'CONTACT', href: '#contact', isRoute: false },
 ];
 
+const getNavHeight = (): number => {
+  const nav = document.querySelector('nav') as HTMLElement | null;
+  return nav?.offsetHeight ?? 96;
+};
+
+const scrollWindowTo = (y: number, duration = 0.8) => {
+  try {
+    gsap.to(window, {
+      duration,
+      scrollTo: { y, autoKill: true },
+      ease: 'power2.out',
+    });
+  } catch {
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }
+};
+
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
-  const barRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollYRef = useRef(0);
+  const navRef = useRef<HTMLElement>(null);
   const [, setLocation] = useLocation();
 
-  // Handle navigation click with smooth scrolling
-  const handleNavClick = (href: string) => {
-    const element = document.querySelector(href) as HTMLElement | null;
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setIsOpen(false);
-      try {
-        window.history.replaceState(null, '', href);
-      } catch (error) {
-        console.error('Failed to update URL hash:', error);
+  // Hide/show on scroll
+  useEffect(() => {
+    const onScroll = () => {
+      const current = window.scrollY;
+      const last = lastScrollYRef.current;
+      const delta = Math.abs(current - last);
+      if (delta < 10) return;
+
+      if (current < 100) {
+        setIsVisible(true);
+      } else if (current > last && delta > 20) {
+        setIsVisible(false);
+        setIsOpen(false);
+      } else if (current < last && delta > 20) {
+        setIsVisible(true);
       }
+      lastScrollYRef.current = current;
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Animate navbar translateY
+  useEffect(() => {
+    if (!navRef.current) return;
+    gsap.to(navRef.current, {
+      y: isVisible ? 0 : -100,
+      duration: 0.3,
+        ease: 'power2.out',
+      });
+  }, [isVisible]);
+
+  const isActive = (tab: NavTab): boolean => {
+    if (tab.isRoute) return window.location.pathname === tab.href;
+    return window.location.hash === tab.href;
+  };
+
+  const handleTab = (tab: NavTab) => {
+    // Route tabs
+    if (tab.isRoute) {
+      setIsOpen(false);
+      setLocation(tab.href);
+      scrollWindowTo(0, 0.6);
       return;
     }
 
-    // Navigate to home and scroll after render
-    setLocation('/');
-    const tryScroll = (attempt = 0) => {
-      const el = document.querySelector(href) as HTMLElement | null;
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        try {
-          window.history.replaceState(null, '', href);
-        } catch (error) {
-          console.error('Failed to update URL hash:', error);
-        }
-        return;
-      }
-      if (attempt < 20) {
-        setTimeout(() => tryScroll(attempt + 1), 50);
+    // Hash tabs - use simple scroll approach like footer
+    setIsOpen(false);
+    const element = document.querySelector(tab.href);
+    if (element) {
+      const navHeight = getNavHeight();
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - navHeight + 30; // 30px higher for better positioning
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    } else {
+      // If element doesn't exist on current page, navigate to home first
+      if (window.location.pathname !== '/') {
+        setLocation('/');
+        // Wait for home page to load, then scroll
+        setTimeout(() => {
+          const targetElement = document.querySelector(tab.href);
+          if (targetElement) {
+            const navHeight = getNavHeight();
+            const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+            const offsetPosition = elementPosition - navHeight + 30;
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
+        }, 200); // Increased timeout for better reliability
       } else {
-        console.warn(`Element with selector ${href} not found after navigation`);
+        // If already on home page but element doesn't exist, just scroll to top
+        scrollWindowTo(0, 0.6);
       }
-    };
-    // Begin retries shortly after route change
-    setTimeout(() => tryScroll(0), 50);
+    }
   };
 
-  // Handle logo click with consistent GSAP scrolling
   const handleLogoClick = () => {
-    // Ensure we are on home route
-    setLocation('/');
-    try {
-      gsap.to(window, {
-        duration: 0.6,
-        scrollTo: { y: 0, autoKill: true },
-        ease: 'power2.out',
+    // Same functionality as footer - scroll to home section
+    const element = document.querySelector('#home');
+    if (element) {
+      const navHeight = getNavHeight();
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - navHeight + 30; // 30px higher for better positioning
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
       });
-    } catch {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // If home section doesn't exist, navigate to home page and scroll to top
+      setLocation('/');
+      scrollWindowTo(0, 1.0);
     }
     setIsOpen(false);
-    try {
-      window.history.replaceState(null, '', '#home');
-    } catch (error) {
-      console.error('Failed to update URL hash:', error);
-    }
+    // Don't update URL hash - keep it clean like other navbar buttons
   };
-
-  // Handle hash change
-  useEffect(() => {
-    const handleHashChange = () => {
-      // Reset any scroll-related state if needed
-    };
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
 
   return (
     <nav
-      className="fixed top-0 left-0 w-full z-50 bg-transparent pointer-events-auto"
-      style={{ transform: 'translateY(0)', willChange: 'transform' }}
+      ref={navRef}
+      className="fixed top-0 left-0 w-full z-50 bg-transparent backdrop-blur-md border-b border-white/10 pointer-events-auto transition-all duration-300"
+      style={{ willChange: 'transform' }}
     >
-      <div className="mx-auto max-w-7xl px-6 md:px-10 py-4">
+      <div className="mx-auto max-w-7xl px-4 md:px-8 py-2">
         <header
-          ref={barRef}
-          className="bg-transparent px-0 h-24 min-h-[96px] flex items-center justify-between"
+          className="bg-transparent px-0 h-16 min-h-[64px] flex items-center justify-between"
         >
           {/* Logo */}
           <button
             onClick={handleLogoClick}
-            className="flex items-center gap-5 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-cyan-400"
+            className="flex items-center gap-3 whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded-lg"
             aria-label="Go to homepage"
           >
             <img
-              src="/src/images/logo.jpeg"
+              src={logoImage}
               alt="Trintz Solutions Logo"
-              className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+              className="w-10 h-10 rounded-lg object-cover flex-shrink-0"
               onError={(e) => {
-                e.currentTarget.src = '/src/images/fallback-logo.png'; // Fallback image
+                e.currentTarget.style.display = 'none';
+                e.currentTarget.nextElementSibling?.classList.remove('hidden');
               }}
             />
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center flex-shrink-0 hidden">
+              <span className="text-white font-bold text-lg">T</span>
+            </div>
             <span
               onClick={(e) => { e.preventDefault(); handleLogoClick(); (e.currentTarget as HTMLSpanElement).blur?.(); }}
               role="button"
               tabIndex={0}
-              className="text-2xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+              className="text-xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
             >
               Trintz Solutions
             </span>
           </button>
 
           {/* Desktop Tabs */}
-          <div className="hidden lg:flex items-center gap-2">
+          <div className="hidden lg:flex items-center gap-1">
             {tabs.map((tab) => (
               <div key={tab.href} className="relative group">
+                {tab.isRoute ? (
+                  <Link href={tab.href} onClick={() => setIsOpen(false)}>
+                    <button
+                      className="relative z-10 text-white/80 hover:text-cyan-300 text-sm font-medium px-4 py-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded-md"
+                      onMouseEnter={(e) => { gsap.to(e.currentTarget, { y: -1, duration: 0.2, ease: 'power1.out' }); }}
+                      onMouseLeave={(e) => { gsap.to(e.currentTarget, { y: 0, duration: 0.2, ease: 'power1.out' }); }}
+                      aria-current={isActive(tab) ? 'page' : undefined}
+                    >
+                      <span className="relative">
+                        {tab.label}
+                        <span className="absolute -bottom-1 left-0 h-0.5 bg-cyan-400/80 transition-all duration-200 w-0 group-hover:w-full"></span>
+                      </span>
+                    </button>
+                  </Link>
+                ) : (
                 <button
-                  onClick={(e) => { handleNavClick(tab.href); (e.currentTarget as HTMLButtonElement).blur(); }}
-                  className="relative z-10 text-white/80 hover:text-cyan-300 text-lg px-6 py-5 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-                  onMouseEnter={(e) => {
-                    gsap.to(e.currentTarget, { y: -2, duration: 0.2, ease: 'power1.out' });
-                  }}
-                  onMouseLeave={(e) => {
-                    gsap.to(e.currentTarget, { y: 0, duration: 0.2, ease: 'power1.out' });
-                  }}
-                  aria-current={window.location.hash === tab.href ? 'page' : undefined}
+                    onClick={(e) => { handleTab(tab); (e.currentTarget as HTMLButtonElement).blur(); }}
+                    className="relative z-10 text-white/80 hover:text-cyan-300 text-sm font-medium px-4 py-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded-md"
+                    onMouseEnter={(e) => { gsap.to(e.currentTarget, { y: -1, duration: 0.2, ease: 'power1.out' }); }}
+                    onMouseLeave={(e) => { gsap.to(e.currentTarget, { y: 0, duration: 0.2, ease: 'power1.out' }); }}
+                    aria-current={isActive(tab) ? 'page' : undefined}
                 >
                   <span className="relative">
                     {tab.label}
                     <span className="absolute -bottom-1 left-0 h-0.5 bg-cyan-400/80 transition-all duration-200 w-0 group-hover:w-full"></span>
                   </span>
                 </button>
+                )}
               </div>
             ))}
           </div>
@@ -155,8 +227,36 @@ export default function Navigation() {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3 whitespace-nowrap">
             <button
-              onClick={() => handleNavClick('#contact')}
-              className="bg-white/10 hover:bg-cyan-600/30 text-white px-8 py-3 rounded-lg font-semibold text-base transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              onClick={() => {
+                setIsOpen(false);
+                const element = document.querySelector('#contact');
+                if (element) {
+                  const navHeight = getNavHeight();
+                  const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+                  const offsetPosition = elementPosition - navHeight + 30;
+
+                  window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                  });
+                } else {
+                  setLocation('/');
+                  setTimeout(() => {
+                    const targetElement = document.querySelector('#contact');
+                    if (targetElement) {
+                      const navHeight = getNavHeight();
+                      const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+                      const offsetPosition = elementPosition - navHeight + 30;
+
+                      window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                      });
+                    }
+                  }, 200); // Increased timeout for better reliability
+                }
+              }}
+              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400 shadow-lg"
               aria-label="Get a quote"
             >
               GET QUOTE
@@ -167,7 +267,7 @@ export default function Navigation() {
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="p-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              className="p-2 text-white focus:outline-none focus:ring-2 focus:ring-cyan-400 rounded-md"
               aria-label={isOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isOpen}
             >
@@ -180,16 +280,34 @@ export default function Navigation() {
       {/* Mobile Dropdown */}
       <div
         className={`md:hidden px-4 transition-all duration-300 overflow-hidden ${
-          isOpen ? 'max-h-[500px] mt-3' : 'max-h-0 mt-0'
+          isOpen ? 'max-h-[500px] pb-4' : 'max-h-0'
         }`}
       >
-        <div className="rounded-2xl border border-white/10 bg-transparent p-1 space-y-1">
+        <div className="rounded-xl border border-white/10 bg-black/60 backdrop-blur-sm p-2 space-y-1">
           {tabs.map((tab) => (
             <div key={tab.href} className="relative group">
+              {tab.isRoute ? (
+                <Link href={tab.href} onClick={() => setIsOpen(false)}>
+                  <button
+                    className="w-full text-left text-sm rounded-lg px-4 py-3 transition-all duration-200 text-white/90 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                    aria-current={isActive(tab) ? 'page' : undefined}
+                  >
+                    <div className="flex items-center">
+                      <span className="w-1.5 h-1.5 rounded-full mr-3 transition-opacity duration-300 bg-cyan-400 opacity-0 group-hover:opacity-100"></span>
+                      <span>{tab.label}</span>
+                      <span className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <svg className="w-4 h-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </span>
+                    </div>
+                  </button>
+                </Link>
+              ) : (
               <button
-                onClick={(e) => { handleNavClick(tab.href); (e.currentTarget as HTMLButtonElement).blur(); }}
-                className="w-full text-left text-sm rounded-lg px-4 py-3 transition-all duration-200 text-white/90 hover:text-white focus:outline-none focus:ring-2 focus:ring-cyan-400"
-                aria-current={window.location.hash === tab.href ? 'page' : undefined}
+                  onClick={(e) => { handleTab(tab); (e.currentTarget as HTMLButtonElement).blur(); }}
+                  className="w-full text-left text-sm rounded-lg px-4 py-3 transition-all duration-200 text-white/90 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                  aria-current={isActive(tab) ? 'page' : undefined}
               >
                 <div className="flex items-center">
                   <span className="w-1.5 h-1.5 rounded-full mr-3 transition-opacity duration-300 bg-cyan-400 opacity-0 group-hover:opacity-100"></span>
@@ -201,17 +319,43 @@ export default function Navigation() {
                   </span>
                 </div>
               </button>
+              )}
             </div>
           ))}
           {/* Mobile CTA */}
           <div className="pt-2">
             <button
               onClick={(e) => {
-                handleNavClick('#contact');
                 setIsOpen(false);
+                const element = document.querySelector('#contact');
+                if (element) {
+                  const navHeight = getNavHeight();
+                  const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+                  const offsetPosition = elementPosition - navHeight + 30;
+
+                  window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                  });
+                } else {
+                  setLocation('/');
+                  setTimeout(() => {
+                    const targetElement = document.querySelector('#contact');
+                    if (targetElement) {
+                      const navHeight = getNavHeight();
+                      const elementPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+                      const offsetPosition = elementPosition - navHeight + 30;
+
+                      window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                      });
+                    }
+                  }, 200); // Increased timeout for better reliability
+                }
                 (e.currentTarget as HTMLButtonElement).blur();
               }}
-              className="w-full bg-white/10 hover:bg-white/20 text-white px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-4 py-3 rounded-lg font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-cyan-400"
               aria-label="Get a quote"
             >
               GET QUOTE

@@ -55,60 +55,46 @@ export default function Footer() {
 
   useScrollTrigger({
     trigger: footerRef.current,
-    once: true,
+    start: 'top 80%',
     onEnter: () => {
-      if (!titleRef.current || !contentRef.current) return;
+      gsap.fromTo(
+        titleRef.current,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }
+      );
       
-      const contentChildren = Array.from(contentRef.current.children);
-      if (contentChildren.length === 0) return;
-      
-      const ctx = gsap.context(() => {
-        const tl = gsap.timeline({
-          defaults: { ease: 'power3.out' },
-          onComplete: () => {
-            if (titleRef.current) titleRef.current.style.willChange = 'auto';
-            contentChildren.forEach(child => {
-              (child as HTMLElement).style.willChange = 'auto';
-            });
-          }
-        });
-        
-        // Animate title
-        tl.fromTo(
-          titleRef.current,
-          { opacity: 0, y: 30, willChange: 'transform, opacity' },
-          { opacity: 1, y: 0, duration: 0.8 },
-          0
-        );
-        
-        // Animate content with stagger
-        tl.fromTo(
-          contentChildren,
-          { opacity: 0, y: 20, willChange: 'transform, opacity' },
-          { 
-            opacity: 1, 
-            y: 0,
-            duration: 0.7,
-            stagger: 0.1,
-            ease: 'back.out(1.4)'
-          },
-          0.3
-        );
-        
-        return () => ctx.revert();
-      }, footerRef);
-    }
+      gsap.fromTo(
+        contentRef.current?.children || [],
+        { opacity: 0, y: 20 },
+        { 
+          opacity: 1, 
+          y: 0,
+          duration: 0.6, 
+          stagger: 0.1, 
+          ease: 'power2.out',
+          delay: 0.3
+        }
+      );
+    },
   });
 
   const handleLinkClick = (href: string) => {
     const element = document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      const nav = document.querySelector('nav');
+      const navHeight = (nav as HTMLElement | null)?.offsetHeight ?? 80;
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - navHeight + 30; // 30px higher for better positioning
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
     }
   };
 
   return (
-    <footer ref={footerRef} className="py-12 sm:py-16 lg:py-20 bg-transparent relative z-20">
+    <footer ref={footerRef} className="py-8 sm:py-12 lg:py-16 bg-transparent relative z-20">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 -right-32 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl"></div>

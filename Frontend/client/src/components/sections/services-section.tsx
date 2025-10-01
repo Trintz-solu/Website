@@ -1,6 +1,6 @@
-import { useRef, useState, useEffect } from 'react';
-import { motion, useScroll } from 'framer-motion';
-import { Brain, Code, ChartLine, Bot, Lightbulb, Wrench, CheckCircle } from 'lucide-react';
+import { useRef } from 'react';
+import { motion } from 'framer-motion';
+import { Brain, Code, ChartLine, Bot, Lightbulb, Wrench, ArrowRight, CheckCircle } from 'lucide-react';
 
 interface Service {
   icon: React.ElementType;
@@ -95,34 +95,9 @@ const services: Service[] = [
 
 export default function ServicesSection() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState<boolean[]>(services.map(() => false));
-  const [headerVisible, setHeaderVisible] = useState(false);
-  const [activeDotIndex, setActiveDotIndex] = useState<number>(-1);
-  
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start 0.6", "end 0.9"]
-  });
-
-  // Simple scroll progress animation
-  useEffect(() => {
-    return scrollYProgress.on("change", (v) => {
-      setHeaderVisible(v > 0.005);
-      
-      // Simple active dot calculation based on scroll progress
-      const dotCount = services.length;
-      const progressPerDot = 1 / dotCount;
-      const currentDot = Math.floor(v / progressPerDot);
-      setActiveDotIndex(Math.min(currentDot, dotCount - 1));
-      
-      // Update visibility for all items
-      const vis = services.map((_, index) => v >= (index * progressPerDot));
-      setVisible(vis);
-    });
-  }, [scrollYProgress]);
 
   return (
-    <section ref={sectionRef} id="services" data-nav-sticky="true" className="py-20 sm:py-24 lg:py-32 bg-transparent relative z-10 scroll-mt-24">
+    <section ref={sectionRef} id="services" data-nav-sticky="true" className="py-6 sm:py-8 lg:py-12 bg-transparent relative z-10 scroll-mt-16">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 -right-32 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl"></div>
@@ -132,35 +107,24 @@ export default function ServicesSection() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <motion.div
-          className="text-center mb-16 sm:mb-20"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-yellow-400 to-orange-500">
+        <div className="text-center mb-6 sm:mb-8">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-amber-400 via-yellow-400 to-orange-500">
             Our Core Services
           </h2>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+          <p className="text-lg text-gray-400 max-w-3xl mx-auto">
             We make things simple: websites, apps, and automations that just do their job.
           </p>
-        </motion.div>
+        </div>
 
         {/* Timeline Services */}
         <div className="relative">
           {/* Simple timeline track */}
           <div className="absolute left-1/2 w-1.5 h-full bg-gray-700/30 -translate-x-1/2 rounded-full">
-            <motion.div
-              className="absolute w-full h-full bg-gradient-to-b from-cyan-400 to-blue-500 rounded-full"
-              style={{ 
-                height: scrollYProgress,
-                transformOrigin: 'top'
-              }}
-            />
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-cyan-400 to-blue-500 rounded-full opacity-20"></div>
           </div>
           
           {/* Timeline items */}
-          <div className="space-y-12 sm:space-y-14 lg:space-y-16 pb-12">
+          <div className="space-y-8 sm:space-y-10 lg:space-y-12 pb-8">
             {services.map((service, index) => {
               const Icon = service.icon;
               const isEven = index % 2 === 0;
@@ -169,40 +133,29 @@ export default function ServicesSection() {
                 <motion.div
                   key={index}
                   className={`relative flex flex-col lg:flex-row ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center`}
-                  initial={{ opacity: 0, y: 28, scale: 0.98, visibility: 'hidden' }}
-                  animate={{
-                    opacity: visible[index] ? 1 : 0,
-                    y: visible[index] ? 0 : 24,
-                    scale: visible[index] ? 1 : 0.98,
-                    visibility: visible[index] ? 'visible' : 'hidden',
-                  }}
-                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
                 >
                   {/* Content */}
                   <div className={`w-full lg:w-5/12 ${isEven ? 'lg:pr-8 xl:pr-16' : 'lg:pl-8 xl:pl-16'} text-center`}>
                     <motion.div
-                      className="inline-block bg-transparent backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:border-cyan-400/30 transition-all duration-500 hover:shadow-2xl hover:shadow-cyan-400/10"
-                      aria-hidden={!visible[index]}
-                      animate={{
-                        boxShadow: visible[index]
-                          ? '0 12px 32px rgba(0,0,0,0.35)'
-                          : '0 0 0 rgba(0,0,0,0)',
-                        filter: visible[index] ? 'brightness(1)' : 'brightness(0.9)'
-                      }}
-                      transition={{ duration: 0.35, ease: 'easeOut' }}
-                      whileHover={{ y: -8, scale: 1.02 }}
+                      className="inline-block bg-transparent backdrop-blur-sm border border-white/10 rounded-2xl p-8 hover:border-cyan-400/30 transition-all duration-200 hover:shadow-2xl hover:shadow-cyan-400/10"
+                      whileHover={{ y: -5, scale: 1.02 }}
+                      transition={{ duration: 0.2, type: 'spring', stiffness: 400, damping: 25 }}
                     >
                       {/* Background gradient on hover */}
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-500/0 via-blue-500/0 to-purple-500/0 group-hover:from-cyan-500/5 group-hover:via-blue-500/5 group-hover:to-purple-500/5 transition-all duration-500"></div>
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-cyan-500/0 via-blue-500/0 to-purple-500/0 group-hover:from-cyan-500/8 group-hover:via-blue-500/8 group-hover:to-purple-500/8 transition-all duration-200"></div>
                       
                       <div className="relative z-10">
                         {/* Icon */}
-                        <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${service.gradient} mb-6 hover:scale-110 transition-transform duration-300`}>
+                        <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br ${service.gradient} mb-6 transition-transform duration-200`}>
                           <Icon className="w-8 h-8 text-white" />
                         </div>
                         
                         {/* Title */}
-                        <h3 className="text-2xl font-bold text-white mb-4 hover:text-cyan-400 transition-colors duration-300 text-center">
+                        <h3 className="text-xl font-bold text-white mb-4 transition-colors duration-150 text-center">
                           {service.title}
                         </h3>
                         
@@ -222,10 +175,11 @@ export default function ServicesSection() {
                         </ul>
                         
                         {/* Year */}
-                        <div className="flex items-center justify-center">
+                        <div className="flex items-center justify-between">
                           <span className="text-sm text-gray-400 font-medium">
                             Since {service.year}
                           </span>
+                          <ArrowRight className="w-5 h-5 text-cyan-400 transition-transform duration-200" />
                         </div>
                       </div>
                     </motion.div>
@@ -234,11 +188,7 @@ export default function ServicesSection() {
                   {/* Simple Timeline dot */}
                   <div className="w-full lg:w-2/12 flex justify-center my-4 lg:my-0 px-2">
                     <div className="relative w-8 h-8 flex items-center justify-center z-10">
-                      <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                        activeDotIndex === index 
-                          ? 'bg-cyan-400 scale-125 shadow-lg shadow-cyan-400/50' 
-                          : 'bg-gray-400 hover:bg-cyan-400/80'
-                      }`} />
+                      <div className="w-3 h-3 rounded-full bg-cyan-400/70" />
                     </div>
                   </div>
                   

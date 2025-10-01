@@ -7,6 +7,32 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          "Inter",
+          "ui-sans-serif",
+          "system-ui",
+          "Segoe UI",
+          "Helvetica",
+          "Arial",
+          "Noto Sans",
+          "sans-serif",
+          "Apple Color Emoji",
+          "Segoe UI Emoji",
+          "Segoe UI Symbol",
+          "Noto Color Emoji",
+        ],
+        inter: [
+          "Inter",
+          "ui-sans-serif",
+          "system-ui",
+          "Segoe UI",
+          "Helvetica",
+          "Arial",
+          "Noto Sans",
+          "sans-serif",
+        ],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
