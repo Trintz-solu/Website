@@ -1,7 +1,7 @@
 /* eslint-disable */
 /* stylelint-disable */
 /* css-disable */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;600;700&display=swap');
+/* Google Fonts are loaded via link tags in index.html to improve reliability and caching */
 
 @tailwind base;
 @tailwind components;
@@ -29,6 +29,7 @@
   body {
     @apply font-sans antialiased text-foreground;
     color: hsl(var(--foreground));
+    font-synthesis: none; /* prevent fake italics when italic faces aren't available */
     background: linear-gradient(135deg, 
       hsla(240, 10%, 3.9%, 0.95) 0%, 
       hsla(240, 5%, 8%, 0.9) 50%, 
