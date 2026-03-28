@@ -11,9 +11,8 @@ const teamMembers = [
   { name: 'Boopathi R', role: 'UI/UX Designer', linkedin: '#' },
   { name: 'Harish P', role: 'Frontend Developer', linkedin: 'https://www.linkedin.com/in/harish-p-2a55a633a/' },
   { name: 'Allen Immanuel R', role: 'Backend Developer', linkedin: 'https://www.linkedin.com/in/allen-immanuel-27011a324/' },
-  { name: 'Jayasurya S', role: 'AI Research Lead', linkedin: 'https://www.linkedin.com/in/jayasurya-s-97352b2b4?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app' },
-  { name: 'Jeyavel', role: 'DevOps Engineer', linkedin: '#' },
-  { name: 'Kabilan A', role: 'App and Logo Designer', linkedin: 'https://www.linkedin.com/in/kabilananbarasu/' },
+  { name: 'Kokula Selvam B', role: 'DevOps Engineer', linkedin: 'https://www.linkedin.com/in/b-kokula-selvam-17233b310' },
+  { name: 'Kabilan A', role: 'App and Logo Designer', linkedin: 'https://www.linkedin.com/in/kabilananbarasu/' }
 ];
 
 export default function TeamSection() {
