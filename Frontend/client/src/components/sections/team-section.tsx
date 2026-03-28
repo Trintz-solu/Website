@@ -5,14 +5,12 @@ import { Linkedin } from 'lucide-react';
 import { useScrollTrigger } from '@/hooks/use-scroll-trigger';
 
 const teamMembers = [
-  { name: 'Gangeswara J J', role: 'Figma Developer', linkedin: 'https://www.linkedin.com/in/gangeswarajj25/' },
+  { name: 'Gangeswara J J', role: 'UI/UX Designer', linkedin: 'https://www.linkedin.com/in/gangeswarajj25/' },
   { name: 'Monish Narain N', role: 'Full-Stack Developer', linkedin: 'https://www.linkedin.com/in/monish-narain-89a1862bb/' },
-  { name: 'Dhamodraprasath C M', role: 'Web Developer', linkedin: 'https://www.linkedin.com/in/dhamodra-prasath-cm' },
-  { name: 'Boopathi R', role: 'UI/UX Designer', linkedin: '#' },
+  { name: 'Dhamodraprasath C M', role: 'Data Analyst', linkedin: 'https://www.linkedin.com/in/dhamodra-prasath-cm' },
   { name: 'Harish P', role: 'Frontend Developer', linkedin: 'https://www.linkedin.com/in/harish-p-2a55a633a/' },
   { name: 'Allen Immanuel R', role: 'Backend Developer', linkedin: 'https://www.linkedin.com/in/allen-immanuel-27011a324/' },
-  { name: 'Kokula Selvam B', role: 'DevOps Engineer', linkedin: 'https://www.linkedin.com/in/b-kokula-selvam-17233b310' },
-  { name: 'Kabilan A', role: 'App and Logo Designer', linkedin: 'https://www.linkedin.com/in/kabilananbarasu/' }
+  { name: 'Kokula Selvam B', role: 'Graphic & Brand Designer', linkedin: 'https://www.linkedin.com/in/b-kokula-selvam-17233b310' }
 ];
 
 export default function TeamSection() {
